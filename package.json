@@ -1,0 +1,141 @@
+{
+	"name": "vscode-solidity-debug",
+	"displayName": "Solidity Debug",
+	"version": "0.0.1",
+	"publisher": "webcerebrium",
+	"description": "Extension for debugging Solidity contract transactions on Ethereum blockchain for VS Code.",
+	"author": {
+		"name": "Web Cerebrium OÜ",
+		"email": "v.lopata@webcerebrium.com"
+	},
+	"keywords": [
+		"solidity",
+        "debuggers",
+		"debug",
+		"ethereum",
+		"smart-contracts"
+	],
+	"engines": {
+		"vscode": "^1.17.0",
+		"node": ">= 8"
+	},
+	"icon": "images/solidity-debug-icon.png",
+	"categories": [
+		"Debuggers"
+	],
+	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/webcerebrium/vscode-solidity-debug.git"
+	},
+	"bugs": {
+		"url": "https://github.com/webcerebrium/vscode-solidity-debug/issues"
+	},
+	"dependencies": {
+		"evm-breakpoints": "0.0.1",
+		"vscode-debugadapter": "^1.25.0-pre.0",
+		"vscode-debugprotocol": "^1.25.0-pre.0"
+	},
+	"devDependencies": {
+		"@types/node": "^6.0.50",
+		"@types/mocha": "^2.2.44",
+		"typescript": "^2.5.3",
+		"mocha": "^3.5.0",
+		"vscode": "^1.1.6",
+		"vscode-debugadapter-testsupport": "^1.24.0",
+		"tslint": "^5.8.0",
+		"vsce": "^1.31.2"
+	},
+	"scripts": {
+		"prepublish": "tsc -p ./src",
+		"compile": "tsc -p ./src",
+		"tslint": "tslint ./src/**/*.ts",
+		"watch": "tsc -w -p ./src",
+		"test": "mocha -u tdd ./out/tests/",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"package": "vsce package",
+		"publish": "vsce publish"
+	},
+	"main": "./out/extension",
+	"activationEvents": [
+		"onDebug",
+		"onCommand:extension.solidity-debug.getProgramName"
+	],
+	"contributes": {
+		"breakpoints": [
+			{
+				"language": "solidity"
+			}
+		],
+		"debuggers": [
+			{
+				"type": "solidity",
+				"label": "Solidity Debug",
+				"program": "./out/solidityDebug.js",
+				"runtime": "node",
+				"configurationAttributes": {
+					"launch": {
+						"required": [
+							"compiledJson",
+							"rpc",
+							"transactionHash"
+						],
+						"properties": {
+							"program": {
+								"type": "string",
+								"description": "Solidity file that has to be debugged"
+							},
+							"compiledJson": {
+								"type": "string",
+								"description": "Absolute path to JSON files produced by Solidity compiler",
+								"default": "build/contracts/*.json"
+							},
+							"rpc": {
+								"type": "string",
+								"description": "HTTP Address of Ethereum blockchain RPC",
+								"default": "http://localhost:8545/"
+							},
+							"transactionHash": {
+								"type": "string",
+								"description": "Transaction Hash in Ethereum blockchain that has to be debugged"
+							},
+
+							"stopOnEntry": {
+								"type": "boolean",
+								"description": "Automatically stop after launch.",
+								"default": true
+							},
+							"trace": {
+								"type": "boolean",
+								"description": "Enable logging of the Debug Adapter Protocol.",
+								"default": true
+							}
+						}
+					}
+				},
+				"initialConfigurations": [
+				],
+				"configurationSnippets": [
+					{
+						"label": "Solidity: Debug Transaction",
+						"description": "A new configuration for Solidity Debugger",
+						"body": {
+							"type": "solidity",
+							"request": "launch",
+							"name": "${2:Debug Transaction}",
+							"program": "${1:Program}",
+							"compiledJson": "",
+							"stopOnEntry": false,
+							"trace": true,
+							"rpc": "",
+							"transactionHash": ""
+						}
+					}
+				],
+				"variables": {
+					"AskForProgramName": "extension.solidity-debug.getProgramName"
+				}
+			}
+		]
+	}
+}
